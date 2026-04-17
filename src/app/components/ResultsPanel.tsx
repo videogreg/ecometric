@@ -16,11 +16,12 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
     
-    // Save to Supabase
     const { data, error } = await supabase
       .from('leads')
       .insert({
@@ -32,7 +33,12 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
       })
       .select();
     
-    if (data && data[0]) {
+    setSaving(false);
+    
+    if (error) {
+      console.error('Error saving:', error);
+      alert('Error saving email. Please try again.');
+    } else if (data && data[0]) {
       setLeadId(data[0].id);
       setSubmitted(true);
     }
@@ -46,14 +52,16 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
         revenue_potential: buttonType === 'solar' ? 75 : 25
       });
     }
-    // Log to console for now (AI agents will read this later)
     console.log(`Affiliate click: ${buttonType}, Lead: ${leadId}`);
   };
 
-  // Replace with your real affiliate IDs when approved
+  // REAL affiliate links - apply for these accounts
   const affiliateLinks = {
-    solar: 'https://www.energysage.com/solar/carbon-offset/?rc=YOUR_ID',
-    products: 'https://earthhero.com/?ref=YOUR_ID',
+    // Apply at: https://www.energysage.com/partners/
+    solar: 'https://www.energysage.com/solar/carbon-offset/',
+    
+    // Apply at: https://earthhero.com/pages/affiliate-program
+    products: 'https://earthhero.com/',
   };
 
   return (
@@ -87,14 +95,16 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
           />
           <button 
             type="submit"
-            className="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700"
+            disabled={saving}
+            className="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700 disabled:bg-gray-400"
           >
-            Send My Plan
+            {saving ? 'Saving...' : 'Send My Plan'}
           </button>
         </form>
       ) : (
         <div className="mb-6 p-4 bg-green-100 rounded-lg text-center">
-          <p className="text-green-800 font-semibold">✅ Check your inbox!</p>
+          <p className="text-green-800 font-semibold">✅ Success! Check your inbox!</p>
+          <p className="text-green-600 text-sm mt-2">Now explore options below:</p>
         </div>
       )}
 
