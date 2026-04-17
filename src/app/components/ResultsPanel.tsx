@@ -17,28 +17,37 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
   const [submitted, setSubmitted] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setErrorMsg('');
+    
+    // Prepare data - ensure no undefined values
+    const insertData = {
+      email: email,
+      carbon_score: carbonScore,
+      home_size: userData?.homeSize || null,
+      electricity_usage: userData?.electricity || null,
+      miles_per_week: userData?.miles || null
+    };
+    
+    console.log('Sending to Supabase:', insertData);
     
     const { data, error } = await supabase
       .from('leads')
-      .insert({
-        email: email,
-        carbon_score: carbonScore,
-        home_size: userData?.homeSize,
-        electricity_usage: userData?.electricity,
-        miles_per_week: userData?.miles
-      })
+      .insert(insertData)
       .select();
     
     setSaving(false);
     
     if (error) {
-      console.error('Error saving:', error);
-      alert('Error saving email. Please try again.');
+      console.error('Supabase error:', error);
+      setErrorMsg(error.message);
+      alert('Error: ' + error.message);
     } else if (data && data[0]) {
+      console.log('Saved successfully:', data[0]);
       setLeadId(data[0].id);
       setSubmitted(true);
     }
@@ -55,12 +64,8 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
     console.log(`Affiliate click: ${buttonType}, Lead: ${leadId}`);
   };
 
-  // REAL affiliate links - apply for these accounts
   const affiliateLinks = {
-    // Apply at: https://www.energysage.com/partners/
     solar: 'https://www.energysage.com/solar/carbon-offset/',
-    
-    // Apply at: https://earthhero.com/pages/affiliate-program
     products: 'https://earthhero.com/',
   };
 
@@ -79,6 +84,12 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
           ? "⚠️ Moderate impact - Small changes help" 
           : "✅ Low impact - Great job!"}
       </p>
+
+      {errorMsg && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">
+          Error: {errorMsg}
+        </div>
+      )}
 
       {!submitted ? (
         <form onSubmit={handleEmailSubmit} className="mb-6 p-4 bg-emerald-50 rounded-lg">
