@@ -1,22 +1,28 @@
 'use client';
 import { useState } from 'react';
 
+type Data = {
+  homeSize?: number;
+  electricity?: number;
+  miles?: number;
+};
+
 export default function CarbonCalculator() {
   const [step, setStep] = useState(1);
-  const [data, setData] = useState({});
-  const [result, setResult] = useState(null);
+  const [data, setData] = useState<Data>({});
+  const [result, setResult] = useState<string | null>(null);
 
   const calculateFootprint = () => {
-    // Simple carbon calculation formula
-    const homeEmissions = (data.homeSize || 1000) * 0.003;
-    const energyEmissions = (data.electricity || 500) * 0.0004;
-    const carEmissions = (data.miles || 100) * 0.0004;
+    const homeEmissions = (data.homeSize ?? 1000) * 0.003;
+    const energyEmissions = (data.electricity ?? 500) * 0.0004;
+    const carEmissions = (data.miles ?? 100) * 0.0004;
     const total = homeEmissions + energyEmissions + carEmissions;
     return total.toFixed(2);
   };
 
-  const handleNext = (newData) => {
-    setData({...data, ...newData});
+  const handleNext = (newData: Partial<Data>) => {
+    const updatedData = { ...data, ...newData };
+    setData(updatedData);
     if (step < 3) {
       setStep(step + 1);
     } else {
@@ -31,8 +37,8 @@ export default function CarbonCalculator() {
         <h2 className="text-2xl font-bold text-emerald-800 mb-4">Your Carbon Footprint</h2>
         <div className="text-4xl font-bold text-emerald-600 mb-2">{result} tons/year</div>
         <p className="text-gray-600 mb-6">
-          {result > 10 ? "🚨 High impact - Solar panels could cut this by 40%" : 
-           result > 5 ? "⚠️ Moderate impact - Small changes help" : 
+          {parseFloat(result) > 10 ? "🚨 High impact - Solar panels could cut this by 40%" : 
+           parseFloat(result) > 5 ? "⚠️ Moderate impact - Small changes help" : 
            "✅ Low impact - Great job!"}
         </p>
         
@@ -54,7 +60,7 @@ export default function CarbonCalculator() {
         <div>
           <h3 className="text-lg font-bold mb-4">Step 1: Home Size</h3>
           <p className="mb-2">Square feet:</p>
-          <select className="w-full p-2 border rounded mb-4" onChange={(e) => handleNext({homeSize: e.target.value})}>
+          <select className="w-full p-2 border rounded mb-4" onChange={(e) => handleNext({homeSize: parseInt(e.target.value)})}>
             <option value="">Select...</option>
             <option value="500">Small (500 sq ft)</option>
             <option value="1000">Medium (1,000 sq ft)</option>
@@ -67,7 +73,7 @@ export default function CarbonCalculator() {
         <div>
           <h3 className="text-lg font-bold mb-4">Step 2: Monthly Electricity</h3>
           <p className="mb-2">kWh per month:</p>
-          <select className="w-full p-2 border rounded mb-4" onChange={(e) => handleNext({electricity: e.target.value})}>
+          <select className="w-full p-2 border rounded mb-4" onChange={(e) => handleNext({electricity: parseInt(e.target.value)})}>
             <option value="">Select...</option>
             <option value="300">Low (300 kWh)</option>
             <option value="600">Average (600 kWh)</option>
@@ -80,7 +86,7 @@ export default function CarbonCalculator() {
         <div>
           <h3 className="text-lg font-bold mb-4">Step 3: Driving</h3>
           <p className="mb-2">Miles per week:</p>
-          <select className="w-full p-2 border rounded mb-4" onChange={(e) => handleNext({miles: e.target.value})}>
+          <select className="w-full p-2 border rounded mb-4" onChange={(e) => handleNext({miles: parseInt(e.target.value)})}>
             <option value="">Select...</option>
             <option value="50">Low (50 miles)</option>
             <option value="200">Average (200 miles)</option>
