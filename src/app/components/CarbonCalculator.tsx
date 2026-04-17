@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import ResultsPanel from './ResultsPanel';
 
 type Data = {
   homeSize?: number;
@@ -33,24 +34,14 @@ export default function CarbonCalculator() {
 
   if (result) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto text-left">
-        <h2 className="text-2xl font-bold text-emerald-800 mb-4">Your Carbon Footprint</h2>
-        <div className="text-4xl font-bold text-emerald-600 mb-2">{result} tons/year</div>
-        <p className="text-gray-600 mb-6">
-          {parseFloat(result) > 10 ? "🚨 High impact - Solar panels could cut this by 40%" : 
-           parseFloat(result) > 5 ? "⚠️ Moderate impact - Small changes help" : 
-           "✅ Low impact - Great job!"}
-        </p>
-        
-        <div className="space-y-3">
-          <button className="w-full bg-emerald-600 text-white p-3 rounded hover:bg-emerald-700">
-            Get Free Solar Estimate (Save $1,200/year)
-          </button>
-          <button className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700">
-            Shop Carbon-Neutral Products
-          </button>
-        </div>
-      </div>
+      <ResultsPanel 
+        carbonScore={parseFloat(result)} 
+        onRestart={() => {
+          setResult(null);
+          setStep(1);
+          setData({});
+        }}
+      />
     );
   }
 
