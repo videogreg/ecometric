@@ -41,6 +41,7 @@ export default function CarbonCalculator() {
           setStep(1);
           setData({});
         }}
+        userData={data}
       />
     );
   }

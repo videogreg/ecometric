@@ -1,23 +1,56 @@
 'use client';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 type ResultsPanelProps = {
   carbonScore: number;
   onRestart: () => void;
+  userData?: {
+    homeSize?: number;
+    electricity?: number;
+    miles?: number;
+  };
 };
 
-export default function ResultsPanel({ carbonScore, onRestart }: ResultsPanelProps) {
+export default function ResultsPanel({ carbonScore, onRestart, userData }: ResultsPanelProps) {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [leadId, setLeadId] = useState<string | null>(null);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Store email (we'll connect to Supabase later)
-    console.log('Email captured:', email);
-    setSubmitted(true);
+    
+    // Save to Supabase
+    const { data, error } = await supabase
+      .from('leads')
+      .insert({
+        email: email,
+        carbon_score: carbonScore,
+        home_size: userData?.homeSize,
+        electricity_usage: userData?.electricity,
+        miles_per_week: userData?.miles
+      })
+      .select();
+    
+    if (data && data[0]) {
+      setLeadId(data[0].id);
+      setSubmitted(true);
+    }
   };
 
-  // Affiliate links (replace with your real IDs when approved)
+  const trackClick = async (buttonType: 'solar' | 'products') => {
+    if (leadId) {
+      await supabase.from('clicks').insert({
+        lead_id: leadId,
+        button_type: buttonType,
+        revenue_potential: buttonType === 'solar' ? 75 : 25
+      });
+    }
+    // Log to console for now (AI agents will read this later)
+    console.log(`Affiliate click: ${buttonType}, Lead: ${leadId}`);
+  };
+
+  // Replace with your real affiliate IDs when approved
   const affiliateLinks = {
     solar: 'https://www.energysage.com/solar/carbon-offset/?rc=YOUR_ID',
     products: 'https://earthhero.com/?ref=YOUR_ID',
@@ -39,7 +72,6 @@ export default function ResultsPanel({ carbonScore, onRestart }: ResultsPanelPro
           : "✅ Low impact - Great job!"}
       </p>
 
-      {/* Email Capture */}
       {!submitted ? (
         <form onSubmit={handleEmailSubmit} className="mb-6 p-4 bg-emerald-50 rounded-lg">
           <p className="text-sm text-emerald-800 mb-2 font-semibold">
@@ -66,14 +98,13 @@ export default function ResultsPanel({ carbonScore, onRestart }: ResultsPanelPro
         </div>
       )}
 
-      {/* Affiliate Revenue Buttons */}
       <div className="space-y-3">
         <a 
           href={affiliateLinks.solar}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackClick('solar')}
           className="block w-full bg-amber-500 text-white p-4 rounded-lg hover:bg-amber-600 text-center font-bold shadow-md"
-          onClick={() => console.log('Solar affiliate clicked')}
         >
           ☀️ Get Free Solar Estimate<br />
           <span className="text-sm font-normal">Save $1,200/year • No obligation</span>
@@ -83,8 +114,8 @@ export default function ResultsPanel({ carbonScore, onRestart }: ResultsPanelPro
           href={affiliateLinks.products}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackClick('products')}
           className="block w-full bg-emerald-600 text-white p-4 rounded-lg hover:bg-emerald-700 text-center font-bold shadow-md"
-          onClick={() => console.log('Products affiliate clicked')}
         >
           🛒 Shop Carbon-Neutral Products<br />
           <span className="text-sm font-normal">Verified sustainable brands</span>
