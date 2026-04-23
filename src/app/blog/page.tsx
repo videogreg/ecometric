@@ -1,0 +1,50 @@
+import fs from 'fs';
+import path from 'path';
+import Link from 'next/link';
+
+export default function BlogPage() {
+  const contentDir = path.join(process.cwd(), 'content');
+  let articles = [];
+  
+  try {
+    const indexPath = path.join(contentDir, 'index.json');
+    if (fs.existsSync(indexPath)) {
+      articles = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+    }
+  } catch {
+    articles = [];
+  }
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-4xl font-bold text-emerald-800 mb-8">EcoMetric Blog</h1>
+        <p className="text-emerald-600 mb-8">Sustainable living tips and carbon reduction guides</p>
+        
+        {articles.length === 0 ? (
+          <p className="text-gray-500">Articles coming soon...</p>
+        ) : (
+          <div className="space-y-6">
+            {articles.map((article) => (
+              <article key={article.slug} className="bg-white p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-bold text-emerald-800 mb-2">
+                  <Link href={`/blog/${article.slug}`} className="hover:underline">
+                    {article.title}
+                  </Link>
+                </h2>
+                <p className="text-gray-500 text-sm mb-2">{article.date}</p>
+                <p className="text-gray-600">{article.excerpt}</p>
+              </article>
+            ))}
+          </div>
+        )}
+        
+        <div className="mt-8 text-center">
+          <Link href="/" className="text-emerald-600 hover:underline">
+            ← Back to Calculator
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
