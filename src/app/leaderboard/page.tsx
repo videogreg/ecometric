@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 type Lead = {
@@ -9,16 +9,28 @@ type Lead = {
 };
 
 export default function LeaderboardPage() {
-  // Read from local JSON file instead of Supabase (static export compatible)
-  const dataPath = path.join(process.cwd(), 'content', 'leads.json');
-  let topUsers: Lead[] = [];
-  
-  try {
-    if (fs.existsSync(dataPath)) {
-      topUsers = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-    }
-  } catch {
-    topUsers = [];
+  const [users, setUsers] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/leaderboard')
+      .then(res => res.json())
+      .then(data => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setUsers([]);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-8 flex items-center justify-center">
+        <div className="text-emerald-300 text-xl">Loading leaderboard...</div>
+      </main>
+    );
   }
 
   return (
@@ -28,9 +40,9 @@ export default function LeaderboardPage() {
         <p className="text-emerald-300 text-center mb-8">Lowest carbon footprints this month</p>
         
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-          {topUsers.length > 0 ? (
+          {users.length > 0 ? (
             <div className="space-y-3">
-              {topUsers.map((user: Lead, index: number) => (
+              {users.map((user, index) => (
                 <div 
                   key={index} 
                   className={`flex items-center justify-between p-4 rounded-lg ${
