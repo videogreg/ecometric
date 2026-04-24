@@ -122,11 +122,11 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
             {saving ? 'Generating Your Plan...' : 'Send My Free Plan'}
           </button>
         </form>
-      ) : (
-        <div className="mt-6 p-5 bg-green-100 rounded-xl text-center border border-green-300">
+           ) : (
+        <div className="mb-6 p-4 bg-green-100 rounded-lg text-center border border-green-300">
           <p className="text-green-800 font-bold text-lg">✅ Plan Generated!</p>
           <p className="text-green-700 text-sm mt-1">
-            Check <strong>ecomcip@gmail.com</strong> in 2-3 minutes
+            Check <strong>{email}</strong> in 2-3 minutes
           </p>
           <p className="text-green-600 text-xs mt-2">
             (Don't forget to check spam folder)
