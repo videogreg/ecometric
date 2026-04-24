@@ -11,6 +11,22 @@ type Article = {
   content: string;
 };
 
+// Required for static export - tells Next.js which pages to generate
+export function generateStaticParams() {
+  const contentDir = path.join(process.cwd(), 'content');
+  const indexPath = path.join(contentDir, 'index.json');
+  
+  if (!fs.existsSync(indexPath)) {
+    return [];
+  }
+  
+  const articles: Article[] = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  
+  return articles.map((article: Article) => ({
+    slug: article.slug,
+  }));
+}
+
 export default function ArticlePage({ params }: { params: { slug: string } }) {
   const contentDir = path.join(process.cwd(), 'content');
   const indexPath = path.join(contentDir, 'index.json');
