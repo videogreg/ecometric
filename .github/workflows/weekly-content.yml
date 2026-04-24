@@ -19,15 +19,14 @@ jobs:
       - name: Generate article
         run: node scripts/generate-article.js
           
-      - name: Rebuild and deploy
+      - name: Update leaderboard data
         run: |
-          npm install
-          npm run build
+          curl -s https://ecometric-carbon-calc.netlify.app/api/leaderboard > content/leads.json || echo "[]" > content/leads.json
           
       - name: Commit and push
         run: |
           git config user.name "EcoMetric Bot"
           git config user.email "bot@ecometric.app"
           git add .
-          git commit -m "Auto-generate weekly article and rebuild" || exit 0
+          git commit -m "Auto-generate weekly article and update leaderboard" || exit 0
           git push
