@@ -85,7 +85,7 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
     setSaving(false);
   };
 
-  const trackClick = async (buttonType: 'solar' | 'epa') => {
+  const trackClick = async (buttonType: 'solar' | 'blog') => {
     if (leadId) {
       await supabase.from('clicks').insert({
         lead_id: leadId,
@@ -209,7 +209,7 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
         )}
       </div>
 
-      {/* HONEST AFFILIATE SECTION */}
+      {/* AFFILIATE BUTTONS — NO COMPETITORS */}
       <div className="mt-6 space-y-3">
         <a 
           href="https://www.energysage.com/solar/carbon-offset/"
@@ -223,14 +223,12 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
         </a>
 
         <a 
-          href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => trackClick('epa')}
-          className="block w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-xl hover:from-blue-700 hover:to-blue-900 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
+          href="https://ecometric-carbon-calc.netlify.app/blog"
+          onClick={() => trackClick('blog')}
+          className="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-xl hover:from-emerald-700 hover:to-teal-700 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
         >
-          <div className="text-lg">🧮 EPA Carbon Calculator</div>
-          <div className="text-sm font-normal opacity-90">Free government tool • Verify your footprint</div>
+          <div className="text-lg">📚 Read Sustainability Guides</div>
+          <div className="text-sm font-normal opacity-90">Free tips on solar, insulation & saving money</div>
         </a>
       </div>
 
