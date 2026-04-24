@@ -16,18 +16,18 @@ jobs:
         with:
           node-version: '20'
           
-      - name: Install dependencies
-        run: npm install
-        
       - name: Generate article
         run: node scripts/generate-article.js
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          
+      - name: Rebuild and deploy
+        run: |
+          npm install
+          npm run build
           
       - name: Commit and push
         run: |
           git config user.name "EcoMetric Bot"
           git config user.email "bot@ecometric.app"
           git add .
-          git commit -m "Auto-generate weekly article" || exit 0
+          git commit -m "Auto-generate weekly article and rebuild" || exit 0
           git push
