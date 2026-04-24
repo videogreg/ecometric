@@ -85,8 +85,8 @@ exports.handler = async (event) => {
     // 9. SECONDHAND - Ellen MacArthur (Global)
     html += actionCard('9', '&#9851;', 'Buy Secondhand Before New', 'Manufacturing one laptop = 200 kg CO2. Ellen MacArthur Foundation: extending product life 2x cuts manufacturing emissions 50%.', '0.5-2 tonnes/year', 'Ellen MacArthur Foundation', 'https://ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview', null, null);
     
-    // 10. COMMUNITY SOLAR - NREL (US)
-    html += actionCard('10', '&#127758;', 'Join Community Solar', 'No roof? No problem. NREL research shows community solar subscribers save 10-15% on bills with zero installation cost.', '1-3 tonnes/year', 'National Renewable Energy Laboratory (USA)', 'https://www.nrel.gov/solar/', null, null);
+    // 10. COMMUNITY SOLAR - DOE (US) — DIFFERENT LINK, NO DUPLICATE
+    html += actionCard('10', '&#127758;', 'Join Community Solar', 'No roof? No problem. U.S. Department of Energy community solar programs let you subscribe to local solar farms with zero installation cost.', '1-3 tonnes/year', 'U.S. Department of Energy', 'https://www.energy.gov/eere/solar/community-solar-basics', null, null);
     
     // CTA box
     html += '<div style="background:#fef3c7;padding:20px;border-radius:10px;margin-top:30px;border-left:4px solid #f59e0b;">';
