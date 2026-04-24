@@ -1,8 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import fs from 'fs';
-import path from 'path';
 
 type Article = {
   slug: string;
@@ -13,18 +11,29 @@ type Article = {
 };
 
 export default function BlogPage() {
+  const [articles, setArticles] = useState<Article[]>([]);
   const [expandedArticle, setExpandedArticle] = useState<string | null>(null);
-  
-  const contentDir = path.join(process.cwd(), 'content');
-  let articles: Article[] = [];
-  
-  try {
-    const indexPath = path.join(contentDir, 'index.json');
-    if (fs.existsSync(indexPath)) {
-      articles = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
-    }
-  } catch {
-    articles = [];
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/content/index.json')
+      .then(res => res.json())
+      .then(data => {
+        setArticles(data || []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setArticles([]);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-8 flex items-center justify-center">
+        <div className="text-emerald-300 text-xl">Loading articles...</div>
+      </main>
+    );
   }
 
   return (
