@@ -22,11 +22,14 @@ export default function CarbonCalculator() {
     breakdown: Record<string, number>;
   } | null>(null);
 
+  // Step-local state so user can change selections before submitting
+  const [step1, setStep1] = useState<{occupants?: number; homeSize?: number; heatingType?: Data['heatingType']}>({});
+  const [step2, setStep2] = useState<{electricity?: number}>({});
+  const [step3, setStep3] = useState<{miles?: number; vehicleType?: Data['vehicleType']; flights?: number}>({});
+  const [step4, setStep4] = useState<{diet?: Data['diet']}>({});
+  const [step5, setStep5] = useState<{shopping?: Data['shopping']}>({});
+
   const calculateFootprint = (d: Data) => {
-    // === SCIENTIFIC EMISSION FACTORS (tonnes CO2 per year) ===
-    
-    // 1. HOME HEATING (based on fuel type + sq ft + occupants)
-    // Natural gas: ~0.0054 tonnes per sq ft/year | Oil: ~0.0078 | Electric: ~0.0032 | Heat pump: ~0.0011
     const heatingFactors: Record<string, number> = {
       gas: 0.0054,
       oil: 0.0078,
@@ -34,30 +37,18 @@ export default function CarbonCalculator() {
       heatpump: 0.0011
     };
     const heatingRaw = (d.homeSize || 1500) * (heatingFactors[d.heatingType || 'gas'] || 0.0054);
-    const heatingPerPerson = heatingRaw / (d.occupants || 2); // Divide by household occupants
-
-    // 2. ELECTRICITY (~0.4 kg CO2 per kWh for US/Canada average grid)
-    // 1 kWh = 0.0004 tonnes. Monthly * 12 = yearly
+    const heatingPerPerson = heatingRaw / (d.occupants || 2);
     const electricityTons = ((d.electricity || 800) * 12) * 0.0004;
 
-    // 3. TRANSPORTATION
-    // Gas car: 8.9 kg CO2/gallon. 25 mpg avg. Electric: ~0.05 kg/mile (grid). Hybrid: half of gas.
     const milesPerYear = (d.miles || 250) * 52;
     let transportTons = 0;
-    if (d.vehicleType === 'electric') {
-      transportTons = milesPerYear * 0.00005; // ~0.05 kg/mile from grid
-    } else if (d.vehicleType === 'hybrid') {
-      transportTons = (milesPerYear / 50) * 0.0089; // 50 mpg
-    } else {
-      transportTons = (milesPerYear / 25) * 0.0089; // 25 mpg gas
-    }
+    if (d.vehicleType === 'electric') transportTons = milesPerYear * 0.00005;
+    else if (d.vehicleType === 'hybrid') transportTons = (milesPerYear / 50) * 0.0089;
+    else transportTons = (milesPerYear / 25) * 0.0089;
 
-    // 4. FLIGHTS (0.15 kg CO2 per mile flown. Short round trip = 1,500 miles. Long = 5,000+)
-    const flightMilesPerTrip = 3000; // Average round trip
+    const flightMilesPerTrip = 3000;
     const flightsTons = (d.flights || 2) * flightMilesPerTrip * 0.00015;
 
-    // 5. DIET (tonnes per year)
-    // Heavy meat: 3.3 | Moderate: 2.5 | Vegetarian: 1.5 | Vegan: 1.0
     const dietFactors: Record<string, number> = {
       heavymeat: 3.3,
       moderate: 2.5,
@@ -66,8 +57,6 @@ export default function CarbonCalculator() {
     };
     const dietTons = dietFactors[d.diet || 'moderate'] || 2.5;
 
-    // 6. GOODS & SERVICES (baseline consumption)
-    // High shopper: 5.0 | Average: 3.5 | Low/minimalist: 2.0
     const shoppingFactors: Record<string, number> = {
       high: 5.0,
       average: 3.5,
@@ -75,7 +64,6 @@ export default function CarbonCalculator() {
     };
     const goodsTons = shoppingFactors[d.shopping || 'average'] || 3.5;
 
-    // TOTAL (per person)
     const total = heatingPerPerson + electricityTons + transportTons + flightsTons + dietTons + goodsTons;
 
     return {
@@ -111,6 +99,11 @@ export default function CarbonCalculator() {
           setResult(null);
           setStep(1);
           setData({});
+          setStep1({});
+          setStep2({});
+          setStep3({});
+          setStep4({});
+          setStep5({});
         }}
         userData={data}
       />
@@ -140,7 +133,8 @@ export default function CarbonCalculator() {
           <label className="block text-sm font-medium text-gray-700 mb-1">How many people live in your home?</label>
           <select 
             className="w-full p-2 border rounded mb-3" 
-            onChange={(e) => handleNext({occupants: parseInt(e.target.value)})}
+            value={step1.occupants || ''}
+            onChange={(e) => setStep1({...step1, occupants: parseInt(e.target.value)})}
           >
             <option value="">Select...</option>
             <option value="1">Just me</option>
@@ -153,7 +147,8 @@ export default function CarbonCalculator() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Home size (sq ft)</label>
           <select 
             className="w-full p-2 border rounded mb-3" 
-            onChange={(e) => handleNext({homeSize: parseInt(e.target.value)})}
+            value={step1.homeSize || ''}
+            onChange={(e) => setStep1({...step1, homeSize: parseInt(e.target.value)})}
           >
             <option value="">Select...</option>
             <option value="600">Small apartment (600 sq ft)</option>
@@ -165,8 +160,9 @@ export default function CarbonCalculator() {
 
           <label className="block text-sm font-medium text-gray-700 mb-1">Primary heating source</label>
           <select 
-            className="w-full p-2 border rounded" 
-            onChange={(e) => handleNext({heatingType: e.target.value as Data['heatingType']})}
+            className="w-full p-2 border rounded mb-4" 
+            value={step1.heatingType || ''}
+            onChange={(e) => setStep1({...step1, heatingType: e.target.value as Data['heatingType']})}
           >
             <option value="">Select...</option>
             <option value="gas">Natural Gas (most common)</option>
@@ -174,6 +170,14 @@ export default function CarbonCalculator() {
             <option value="electric">Electric baseboard</option>
             <option value="heatpump">Heat Pump (most efficient)</option>
           </select>
+
+          <button
+            onClick={() => handleNext({ occupants: step1.occupants, homeSize: step1.homeSize, heatingType: step1.heatingType })}
+            disabled={!step1.occupants || !step1.homeSize || !step1.heatingType}
+            className="w-full bg-emerald-600 text-white p-3 rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 font-semibold transition"
+          >
+            Continue →
+          </button>
         </div>
       )}
 
@@ -184,15 +188,24 @@ export default function CarbonCalculator() {
           
           <label className="block text-sm font-medium text-gray-700 mb-1">Monthly electricity use (kWh)</label>
           <select 
-            className="w-full p-2 border rounded" 
-            onChange={(e) => handleNext({electricity: parseInt(e.target.value)})}
+            className="w-full p-2 border rounded mb-4" 
+            value={step2.electricity || ''}
+            onChange={(e) => setStep2({...step2, electricity: parseInt(e.target.value)})}
           >
             <option value="">Select...</option>
             <option value="300">Low (300 kWh) — small apt, efficient</option>
             <option value="600">Average (600 kWh) — typical home</option>
             <option value="900">High (900 kWh) — large home, AC</option>
-            <option value="1400">Very High (1,400+ kWh) — large house, pool, etc.</option>
+            <option value="1400">Very High (1,400+ kWh) — large house, pool</option>
           </select>
+
+          <button
+            onClick={() => handleNext({ electricity: step2.electricity })}
+            disabled={!step2.electricity}
+            className="w-full bg-emerald-600 text-white p-3 rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 font-semibold transition"
+          >
+            Continue →
+          </button>
         </div>
       )}
 
@@ -204,7 +217,8 @@ export default function CarbonCalculator() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Miles driven per week</label>
           <select 
             className="w-full p-2 border rounded mb-3" 
-            onChange={(e) => handleNext({miles: parseInt(e.target.value)})}
+            value={step3.miles || ''}
+            onChange={(e) => setStep3({...step3, miles: parseInt(e.target.value)})}
           >
             <option value="">Select...</option>
             <option value="50">Low (50 mi) — mostly transit/bike</option>
@@ -216,7 +230,8 @@ export default function CarbonCalculator() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle type</label>
           <select 
             className="w-full p-2 border rounded mb-3" 
-            onChange={(e) => handleNext({vehicleType: e.target.value as Data['vehicleType']})}
+            value={step3.vehicleType || ''}
+            onChange={(e) => setStep3({...step3, vehicleType: e.target.value as Data['vehicleType']})}
           >
             <option value="">Select...</option>
             <option value="gas">Gasoline car/truck/SUV</option>
@@ -226,8 +241,9 @@ export default function CarbonCalculator() {
 
           <label className="block text-sm font-medium text-gray-700 mb-1">Round-trip flights per year</label>
           <select 
-            className="w-full p-2 border rounded" 
-            onChange={(e) => handleNext({flights: parseInt(e.target.value)})}
+            className="w-full p-2 border rounded mb-4" 
+            value={step3.flights || ''}
+            onChange={(e) => setStep3({...step3, flights: parseInt(e.target.value)})}
           >
             <option value="">Select...</option>
             <option value="0">None</option>
@@ -236,6 +252,14 @@ export default function CarbonCalculator() {
             <option value="6">4-6 trips (frequent traveler)</option>
             <option value="10">10+ trips (road warrior)</option>
           </select>
+
+          <button
+            onClick={() => handleNext({ miles: step3.miles, vehicleType: step3.vehicleType, flights: step3.flights })}
+            disabled={!step3.miles || !step3.vehicleType || step3.flights === undefined}
+            className="w-full bg-emerald-600 text-white p-3 rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 font-semibold transition"
+          >
+            Continue →
+          </button>
         </div>
       )}
 
@@ -246,8 +270,9 @@ export default function CarbonCalculator() {
           
           <label className="block text-sm font-medium text-gray-700 mb-1">Your diet</label>
           <select 
-            className="w-full p-2 border rounded" 
-            onChange={(e) => handleNext({diet: e.target.value as Data['diet']})}
+            className="w-full p-2 border rounded mb-4" 
+            value={step4.diet || ''}
+            onChange={(e) => setStep4({...step4, diet: e.target.value as Data['diet']})}
           >
             <option value="">Select...</option>
             <option value="heavymeat">Heavy meat — daily beef/pork/chicken</option>
@@ -255,6 +280,14 @@ export default function CarbonCalculator() {
             <option value="vegetarian">Vegetarian — no meat, dairy ok</option>
             <option value="vegan">Vegan — plant-based only</option>
           </select>
+
+          <button
+            onClick={() => handleNext({ diet: step4.diet })}
+            disabled={!step4.diet}
+            className="w-full bg-emerald-600 text-white p-3 rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 font-semibold transition"
+          >
+            Continue →
+          </button>
         </div>
       )}
 
@@ -265,14 +298,23 @@ export default function CarbonCalculator() {
           
           <label className="block text-sm font-medium text-gray-700 mb-1">General consumption level</label>
           <select 
-            className="w-full p-2 border rounded" 
-            onChange={(e) => handleNext({shopping: e.target.value as Data['shopping']})}
+            className="w-full p-2 border rounded mb-4" 
+            value={step5.shopping || ''}
+            onChange={(e) => setStep5({...step5, shopping: e.target.value as Data['shopping']})}
           >
             <option value="">Select...</option>
             <option value="low">Minimalist — buy little, reuse, secondhand</option>
             <option value="average">Average — normal shopping, some online</option>
             <option value="high">High — frequent new gadgets, clothes, Amazon</option>
           </select>
+
+          <button
+            onClick={() => handleNext({ shopping: step5.shopping })}
+            disabled={!step5.shopping}
+            className="w-full bg-emerald-600 text-white p-3 rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 font-semibold transition"
+          >
+            Calculate My Footprint →
+          </button>
         </div>
       )}
     </div>
