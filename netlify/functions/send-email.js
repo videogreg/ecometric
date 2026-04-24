@@ -1,3 +1,5 @@
+const nodemailer = require('nodemailer');
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method not allowed' };
@@ -10,6 +12,17 @@ exports.handler = async (event) => {
     if (!email || !carbonScore) {
       return { statusCode: 400, body: JSON.stringify({error: 'Missing fields'}) };
     }
+
+    // Brevo SMTP
+    const transporter = nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'a9322d001@smtp-brevo.com',
+        pass: process.env.BREVO_PASSWORD
+      }
+    });
 
     // Personalized tips
     let tips = '';
@@ -60,10 +73,24 @@ exports.handler = async (event) => {
 
           <div style="background: white; padding: 25px; border-radius: 10px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h3 style="color: #065f46; margin-top: 0;">📊 How You Compare</h3>
-            <p><strong>Your Score:</strong> ${carbonScore.toFixed(1)} tonnes</p>
-            <p><strong>USA Average:</strong> 16.0 tonnes</p>
-            <p><strong>Canada Average:</strong> 15.6 tonnes</p>
-            <p><strong>Paris Target:</strong> 2.5 tonnes</p>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 10px;">Your Score</td>
+                <td style="padding: 10px; text-align: right; font-weight: bold; color: #059669;">${carbonScore.toFixed(1)} tonnes</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 10px;">USA Average</td>
+                <td style="padding: 10px; text-align: right;">16.0 tonnes</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 10px;">Canada Average</td>
+                <td style="padding: 10px; text-align: right;">15.6 tonnes</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px;">Paris Agreement Target</td>
+                <td style="padding: 10px; text-align: right; color: #3b82f6;">2.5 tonnes</td>
+              </tr>
+            </table>
           </div>
 
           <div style="background: white; padding: 25px; border-radius: 10px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -72,45 +99,29 @@ exports.handler = async (event) => {
 
           <div style="background: #fef3c7; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #f59e0b;">
             <h3 style="margin-top: 0; color: #92400e;">☀️ Ready to Save Money?</h3>
-            <p>Solar panels typically save $1,200/year. <a href="https://www.energysage.com/solar/carbon-offset/" style="color: #f59e0b; font-weight: bold;">Get Free Solar Quote</a></p>
+            <p>Solar panels typically save $1,200/year and cut 8+ tonnes of CO2. Get your free estimate:</p>
+            <a href="https://www.energysage.com/solar/carbon-offset/" style="display: inline-block; background: #f59e0b; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Get Free Solar Quote</a>
           </div>
 
           <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px;">
             <p>EcoMetric Carbon Intelligence Platform</p>
-            <p><a href="https://ecometric-carbon-calc.netlify.app" style="color: #059669;">Calculate Again</a></p>
+            <p><a href="https://ecometric-carbon-calc.netlify.app" style="color: #059669;">Calculate Again</a> | <a href="https://ecometric-carbon-calc.netlify.app/blog" style="color: #059669;">Read Our Blog</a></p>
+            <p style="margin-top: 10px;">You're receiving this because you used our carbon calculator.</p>
           </div>
         </div>
       </div>
     `;
 
-    // Use Resend REST API directly
-    const resendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: 'EcoMetric <onboarding@resend.dev>',
-        to: email,
-        subject: `Your Carbon Footprint Report: ${carbonScore.toFixed(1)} tonnes/year`,
-        html: htmlContent
-      })
+    await transporter.sendMail({
+      from: '"EcoMetric" <ecomcip@gmail.com>',
+      to: email,
+      subject: `Your Carbon Footprint Report: ${carbonScore.toFixed(1)} tonnes/year`,
+      html: htmlContent
     });
-
-    const resendData = await resendResponse.json();
-
-    if (!resendResponse.ok) {
-      console.error('Resend error:', resendData);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: resendData.message || 'Email send failed' })
-      };
-    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, id: resendData.id })
+      body: JSON.stringify({ success: true })
     };
     
   } catch (error) {
