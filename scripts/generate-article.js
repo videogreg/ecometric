@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const TOPICS = [
-  "how to reduce carbon footprint in the USA in 2026",
+  "how to reduce carbon footprint in the USA 2026",
+  "how to reduce carbon footprint in North America 2026",
   "how to reduce carbon footprint in Canada 2026",
   "solar panel rebates Ontario homeowners guide",
   "zero waste living tips for beginners",
@@ -35,7 +36,19 @@ async function generateArticle() {
     );
     
     const data = await response.json();
-    const content = data.candidates[0].content.parts[0].text;
+    
+    // Debug: log the response structure
+    console.log('API Response:', JSON.stringify(data, null, 2));
+    
+    // Handle different response structures
+    let content = '';
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+      content = data.candidates[0].content.parts[0].text;
+    } else if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      content = data.candidates[0].content;
+    } else {
+      throw new Error('Unexpected API response structure: ' + JSON.stringify(data));
+    }
     
     const article = {
       slug,
