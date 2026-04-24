@@ -2,9 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
 
+type Article = {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  content: string;
+};
+
 export default function BlogPage() {
   const contentDir = path.join(process.cwd(), 'content');
-  let articles = [];
+  let articles: Article[] = [];
   
   try {
     const indexPath = path.join(contentDir, 'index.json');
@@ -16,16 +24,16 @@ export default function BlogPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-8">
+    <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-8">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold text-emerald-800 mb-8">EcoMetric Blog</h1>
-        <p className="text-emerald-600 mb-8">Sustainable living tips and carbon reduction guides</p>
+        <h1 className="text-4xl font-bold text-white mb-8">EcoMetric Blog</h1>
+        <p className="text-emerald-300 mb-8">Sustainable living tips and carbon reduction guides</p>
         
         {articles.length === 0 ? (
           <p className="text-gray-500">Articles coming soon...</p>
         ) : (
           <div className="space-y-6">
-            {articles.map((article) => (
+            {articles.map((article: Article) => (
               <article key={article.slug} className="bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-bold text-emerald-800 mb-2">
                   <Link href={`/blog/${article.slug}`} className="hover:underline">

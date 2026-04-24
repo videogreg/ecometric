@@ -1,12 +1,25 @@
-import { supabase } from '@/lib/supabase';
+import fs from 'fs';
+import path from 'path';
 import Link from 'next/link';
 
-export default async function LeaderboardPage() {
-  const { data: topUsers } = await supabase
-    .from('leads')
-    .select('email, carbon_score, created_at')
-    .order('carbon_score', { ascending: true })
-    .limit(10);
+type Lead = {
+  email: string;
+  carbon_score: number;
+  created_at: string;
+};
+
+export default function LeaderboardPage() {
+  // Read from local JSON file instead of Supabase (static export compatible)
+  const dataPath = path.join(process.cwd(), 'content', 'leads.json');
+  let topUsers: Lead[] = [];
+  
+  try {
+    if (fs.existsSync(dataPath)) {
+      topUsers = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    }
+  } catch {
+    topUsers = [];
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-8">
@@ -15,9 +28,9 @@ export default async function LeaderboardPage() {
         <p className="text-emerald-300 text-center mb-8">Lowest carbon footprints this month</p>
         
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-          {topUsers && topUsers.length > 0 ? (
+          {topUsers.length > 0 ? (
             <div className="space-y-3">
-              {topUsers.map((user, index) => (
+              {topUsers.map((user: Lead, index: number) => (
                 <div 
                   key={index} 
                   className={`flex items-center justify-between p-4 rounded-lg ${

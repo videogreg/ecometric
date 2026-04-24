@@ -3,6 +3,14 @@ import path from 'path';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+type Article = {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  content: string;
+};
+
 export default function ArticlePage({ params }: { params: { slug: string } }) {
   const contentDir = path.join(process.cwd(), 'content');
   const indexPath = path.join(contentDir, 'index.json');
@@ -11,15 +19,15 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
     notFound();
   }
   
-  const articles = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
-  const article = articles.find((a: any) => a.slug === params.slug);
+  const articles: Article[] = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  const article = articles.find((a: Article) => a.slug === params.slug);
   
   if (!article) {
     notFound();
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-8">
+    <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-8">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-emerald-800 mb-4">{article.title}</h1>
         <p className="text-gray-500 mb-6">{article.date}</p>
