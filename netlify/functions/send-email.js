@@ -1,5 +1,3 @@
-const nodemailer = require('nodemailer');
-
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method not allowed' };
@@ -12,17 +10,6 @@ exports.handler = async (event) => {
     if (!email || !carbonScore) {
       return { statusCode: 400, body: JSON.stringify({error: 'Missing fields'}) };
     }
-
-    // Resend SMTP
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.resend.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'resend',
-        pass: process.env.RESEND_API_KEY
-      }
-    });
 
     // Personalized tips
     let tips = '';
@@ -96,16 +83,34 @@ exports.handler = async (event) => {
       </div>
     `;
 
-    await transporter.sendMail({
-      from: '"EcoMetric" <onboarding@resend.dev>',
-      to: email,
-      subject: `Your Carbon Footprint Report: ${carbonScore.toFixed(1)} tonnes/year`,
-      html: htmlContent
+    // Use Resend REST API directly
+    const resendResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'EcoMetric <ecomcip@gmail.com>',
+        to: email,
+        subject: `Your Carbon Footprint Report: ${carbonScore.toFixed(1)} tonnes/year`,
+        html: htmlContent
+      })
     });
+
+    const resendData = await resendResponse.json();
+
+    if (!resendResponse.ok) {
+      console.error('Resend error:', resendData);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: resendData.message || 'Email send failed' })
+      };
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true })
+      body: JSON.stringify({ success: true, id: resendData.id })
     };
     
   } catch (error) {
