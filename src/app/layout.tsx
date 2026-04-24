@@ -28,6 +28,9 @@ export const metadata = {
     images: ['/og-image.jpg'],
     creator: '@ecometric',
   },
+  verification: {
+    google: 'google-site-verification: googlef1bb1aaf8519f49e.html',
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
