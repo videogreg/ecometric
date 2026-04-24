@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import ComparisonChart from './ComparisonChart';
 
 type ResultsPanelProps = {
   carbonScore: number;
@@ -18,13 +19,13 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
   const [leadId, setLeadId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showShare, setShowShare] = useState(false);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setErrorMsg('');
     
-    // Prepare data - ensure no undefined values
     const insertData = {
       email: email,
       carbon_score: carbonScore,
@@ -32,8 +33,6 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
       electricity_usage: userData?.electricity || null,
       miles_per_week: userData?.miles || null
     };
-    
-    console.log('Sending to Supabase:', insertData);
     
     const { data, error } = await supabase
       .from('leads')
@@ -43,13 +42,12 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
     setSaving(false);
     
     if (error) {
-      console.error('Supabase error:', error);
       setErrorMsg(error.message);
-      alert('Error: ' + error.message);
     } else if (data && data[0]) {
-      console.log('Saved successfully:', data[0]);
       setLeadId(data[0].id);
       setSubmitted(true);
+      // Auto-send report simulation (we'll add SendGrid next)
+      console.log('Would send email to:', email);
     }
   };
 
@@ -61,8 +59,9 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
         revenue_potential: buttonType === 'solar' ? 75 : 25
       });
     }
-    console.log(`Affiliate click: ${buttonType}, Lead: ${leadId}`);
   };
+
+  const shareText = `I just calculated my carbon footprint: ${carbonScore.toFixed(1)} tonnes/year. The average North American produces 16 tonnes! Calculate yours at ecometric-carbon-calc.netlify.app #carbonfootprint #sustainability`;
 
   const affiliateLinks = {
     solar: 'https://www.energysage.com/solar/carbon-offset/',
@@ -70,65 +69,127 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto text-left">
-      <h2 className="text-2xl font-bold text-emerald-800 mb-4">Your Carbon Footprint</h2>
-      
-      <div className="text-4xl font-bold text-emerald-600 mb-2">
-        {carbonScore.toFixed(2)} tons/year
+    <div className="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-lg mx-auto text-left border border-emerald-100">
+      <div className="text-center mb-6">
+        <div className="inline-block px-3 py-1 bg-emerald-100 rounded-full text-emerald-700 text-sm font-semibold mb-2">
+          Results Ready
+        </div>
+        <h2 className="text-3xl font-bold text-emerald-900">Your Carbon Footprint</h2>
       </div>
       
-      <p className="text-gray-600 mb-6">
-        {carbonScore > 10 
-          ? "🚨 High impact - Solar panels could cut this by 40%" 
-          : carbonScore > 5 
-          ? "⚠️ Moderate impact - Small changes help" 
-          : "✅ Low impact - Great job!"}
-      </p>
+      <div className="text-center mb-6">
+        <div className="text-5xl font-bold text-emerald-600 mb-1">
+          {carbonScore.toFixed(2)}
+        </div>
+        <div className="text-gray-500 text-sm">tonnes CO2 / year</div>
+      </div>
+      
+      <ComparisonChart userScore={carbonScore} />
+      
+      <div className="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
+        <p className="text-amber-800 text-sm">
+          <strong>💡 Did you know?</strong> Reducing by just 2 tonnes saves ~$1,200/year in energy costs.
+        </p>
+      </div>
 
       {errorMsg && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">
+        <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
           Error: {errorMsg}
         </div>
       )}
 
       {!submitted ? (
-        <form onSubmit={handleEmailSubmit} className="mb-6 p-4 bg-emerald-50 rounded-lg">
-          <p className="text-sm text-emerald-800 mb-2 font-semibold">
-            Get your personalized reduction plan
+        <form onSubmit={handleEmailSubmit} className="mt-6 p-5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
+          <p className="text-emerald-800 font-bold mb-2">
+            📧 Get Your Personalized Reduction Plan
+          </p>
+          <p className="text-emerald-600 text-sm mb-3">
+            We'll email you 3 custom actions based on your {carbonScore.toFixed(1)} tonne score
           </p>
           <input
             type="email"
             placeholder="your@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded mb-2"
+            className="w-full p-3 border border-emerald-300 rounded-lg mb-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             required
           />
           <button 
             type="submit"
             disabled={saving}
-            className="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700 disabled:bg-gray-400"
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-3 rounded-lg hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 font-semibold shadow-md transition"
           >
-            {saving ? 'Saving...' : 'Send My Plan'}
+            {saving ? 'Generating Your Plan...' : 'Send My Free Plan'}
           </button>
         </form>
       ) : (
-        <div className="mb-6 p-4 bg-green-100 rounded-lg text-center">
-          <p className="text-green-800 font-semibold">✅ Success! Check your inbox!</p>
-          <p className="text-green-600 text-sm mt-2">Now explore options below:</p>
+        <div className="mt-6 p-5 bg-green-100 rounded-xl text-center border border-green-300">
+          <p className="text-green-800 font-bold text-lg">✅ Plan Generated!</p>
+          <p className="text-green-700 text-sm mt-1">
+            Check <strong>ecomcip@gmail.com</strong> in 2-3 minutes
+          </p>
+          <p className="text-green-600 text-xs mt-2">
+            (Don't forget to check spam folder)
+          </p>
         </div>
       )}
 
-      <div className="space-y-3">
+      {/* Social Sharing */}
+      <div className="mt-6 text-center">
+        <button 
+          onClick={() => setShowShare(!showShare)}
+          className="text-emerald-600 hover:text-emerald-800 text-sm font-semibold"
+        >
+          {showShare ? 'Hide Sharing' : '📤 Share Your Results'}
+        </button>
+        
+        {showShare && (
+          <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">Copy and share:</p>
+            <textarea 
+              readOnly 
+              value={shareText}
+              className="w-full p-2 text-xs bg-white border rounded resize-none h-20"
+            />
+            <div className="flex gap-2 mt-2 justify-center">
+              <a 
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+              >
+                Tweet
+              </a>
+              <a 
+                href={`https://www.facebook.com/sharer/sharer.php?u=https://ecometric-carbon-calc.netlify.app`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1 bg-blue-700 text-white text-xs rounded hover:bg-blue-800"
+              >
+                Facebook
+              </a>
+              <button 
+                onClick={() => navigator.clipboard.writeText(shareText)}
+                className="px-3 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Affiliate Revenue Buttons */}
+      <div className="mt-6 space-y-3">
         <a 
           href={affiliateLinks.solar}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick('solar')}
-          className="block w-full bg-amber-500 text-white p-4 rounded-lg hover:bg-amber-600 text-center font-bold shadow-md"
+          className="block w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-xl hover:from-amber-600 hover:to-orange-600 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
         >
-          ☀️ Get Free Solar Estimate<br />
-          <span className="text-sm font-normal">Save $1,200/year • No obligation</span>
+          <div className="text-lg">☀️ Get Free Solar Estimate</div>
+          <div className="text-sm font-normal opacity-90">Save $1,200/year • No obligation • 2-min quote</div>
         </a>
 
         <a 
@@ -136,16 +197,16 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick('products')}
-          className="block w-full bg-emerald-600 text-white p-4 rounded-lg hover:bg-emerald-700 text-center font-bold shadow-md"
+          className="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-xl hover:from-emerald-700 hover:to-teal-700 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
         >
-          🛒 Shop Carbon-Neutral Products<br />
-          <span className="text-sm font-normal">Verified sustainable brands</span>
+          <div className="text-lg">🛒 Shop Carbon-Neutral Products</div>
+          <div className="text-sm font-normal opacity-90">Verified sustainable brands • Free shipping over $50</div>
         </a>
       </div>
 
       <button 
         onClick={onRestart}
-        className="w-full mt-4 text-gray-500 hover:text-gray-700 text-sm"
+        className="w-full mt-6 text-gray-400 hover:text-gray-600 text-sm py-2"
       >
         ← Calculate again
       </button>
