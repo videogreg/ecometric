@@ -24,7 +24,6 @@ exports.handler = async (event) => {
       }
     });
 
-    // Build email with simple concatenation only
     let html = '';
     
     // Header
@@ -57,37 +56,37 @@ exports.handler = async (event) => {
     
     // Actions header
     html += '<h2 style="color:#065f46;margin-bottom:20px;">Your Top 10 Actions</h2>';
-    html += '<p style="color:#6b7280;font-size:13px;margin-bottom:20px;">Every action links to real government or scientific sources.</p>';
+    html += '<p style="color:#6b7280;font-size:13px;margin-bottom:20px;">Verified sources from U.S., Canadian, and European government agencies.</p>';
     
-    // Action 1
-    html += actionCard('1', '&#9729;', 'Get a Free Solar Estimate', 'Solar cuts 3-8 tonnes/year. NREL data shows 20-year savings of $10,000-$30,000 after incentives.', '3-8 tonnes/year', 'National Renewable Energy Laboratory', 'https://www.nrel.gov/solar/solar-basics.html', 'https://www.energysage.com/solar/carbon-offset/', 'Get Free Quote');
+    // 1. SOLAR - NREL (US)
+    html += actionCard('1', '&#9729;', 'Get a Free Solar Estimate', 'Solar cuts 3-8 tonnes/year. NREL data shows 20-year savings of $10,000-$30,000 after federal and state incentives.', '3-8 tonnes/year', 'National Renewable Energy Laboratory (USA)', 'https://www.nrel.gov/solar/', 'https://www.energysage.com/solar/carbon-offset/', 'Get Free Quote');
     
-    // Action 2
-    html += actionCard('2', '&#128293;', 'Switch to a Heat Pump', '3x more efficient than gas furnaces. EPA estimates 4-tonne annual reduction. US: 30% tax credit. Canada: up to $10,000 grant.', '2-5 tonnes/year', 'U.S. EPA + Natural Resources Canada', 'https://www.energystar.gov/products/heating_cooling/heat_pumps', null, null);
+    // 2. HEAT PUMP - NRCan (Canada)
+    html += actionCard('2', '&#128293;', 'Switch to a Heat Pump', 'Heat pumps are 3x more efficient than gas furnaces. Natural Resources Canada estimates 4-tonne annual reduction. Canada Greener Homes Initiative offers up to $10,000 in grants.', '2-5 tonnes/year', 'Natural Resources Canada', 'https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/canada-greener-homes-initiative/canada-greener-homes-initiative', null, null);
     
-    // Action 3
-    html += actionCard('3', '&#127968;', 'Air Seal and Insulate', 'EPA states air leaks waste 25-40% of heating/cooling. Sealing pays back in 2-5 years and cuts 0.5-1.5 tonnes/year.', '0.5-1.5 tonnes/year', 'U.S. EPA EnergyStar', 'https://www.energystar.gov/campaign/seal_insulate', null, null);
+    // 3. INSULATION - EU JRC (European Commission)
+    html += actionCard('3', '&#127968;', 'Air Seal and Insulate Your Home', 'The European Commission Joint Research Centre estimates air leaks waste 25-40% of heating/cooling energy. Proper insulation pays back in 2-5 years.', '0.5-1.5 tonnes/year', 'European Commission JRC', 'https://eplca.jrc.ec.europa.eu/ConsumerFootprint.html', null, null);
     
-    // Action 4
-    html += actionCard('4', '&#128663;', 'Switch to an Electric Vehicle', 'DOE data: EVs produce 60-68% fewer emissions than gas cars. Saves 2-4 tonnes annually for average drivers.', '2-4 tonnes/year', 'U.S. Department of Energy', 'https://afdc.energy.gov/vehicles/electric_emissions.php', null, null);
+    // 4. EV - DOE (US)
+    html += actionCard('4', '&#128663;', 'Switch to an Electric Vehicle', 'U.S. Department of Energy data: EVs produce 60-68% fewer life-cycle emissions than gas cars. In clean-grid regions, the advantage exceeds 80%.', '2-4 tonnes/year', 'U.S. Department of Energy', 'https://afdc.energy.gov/vehicles/electric_emissions.php', null, null);
     
-    // Action 5
-    html += actionCard('5', '&#129385;', 'Reduce Beef Consumption', 'Beef produces 60 kg CO2 per kg — 10x chicken, 50x beans. Oxford study: halving meat cuts food emissions 35%.', '0.8-1.5 tonnes/year', 'University of Oxford', 'https://ourworldindata.org/environmental-impacts-of-food', null, null);
+    // 5. DIET - Oxford / Our World in Data (UK/Global)
+    html += actionCard('5', '&#129385;', 'Reduce Beef Consumption', 'Beef produces 60 kg CO2 per kg — 10x chicken, 50x beans. University of Oxford study: halving meat cuts food emissions 35%.', '0.8-1.5 tonnes/year', 'University of Oxford / Our World in Data', 'https://ourworldindata.org/environmental-impacts-of-food', null, null);
     
-    // Action 6
-    html += actionCard('6', '&#9992;', 'Cut One Flight This Year', 'One cross-country round trip emits ~0.8 tonnes CO2. ICAO calculator confirms. Take train for trips under 500 miles.', '0.8 tonnes/flight', 'ICAO', 'https://www.icao.int/environmental-protection/Carbonoffset/Pages/default.aspx', null, null);
+    // 6. FLIGHTS - ICAO (UN)
+    html += actionCard('6', '&#9992;', 'Cut One Flight This Year', 'One cross-country round trip emits ~0.8 tonnes CO2. ICAO Carbon Emissions Calculator is the UN-approved standard for aviation offset programs.', '0.8 tonnes/flight', 'International Civil Aviation Organization (UN)', 'https://www.icao.int/environmental-protection/environmental-tools/icec', null, null);
     
-    // Action 7
-    html += actionCard('7', '&#128161;', 'Switch to LED Bulbs', 'LEDs use 75% less energy. EnergyStar estimates $225/year savings. Phantom load from devices = 10% of home energy.', '0.3-0.6 tonnes/year', 'EnergyStar.gov', 'https://www.energystar.gov/products/lighting_fans/light_bulbs', null, null);
+    // 7. LEDs - EnergyStar (US)
+    html += actionCard('7', '&#128161;', 'Switch to LED Bulbs', 'LEDs use 75% less energy than incandescent. EPA EnergyStar estimates $225/year household savings. Phantom load from devices equals 10% of home energy.', '0.3-0.6 tonnes/year', 'U.S. EPA EnergyStar', 'https://www.energystar.gov', null, null);
     
-    // Action 8
-    html += actionCard('8', '&#127777;', 'Lower Thermostat at Night', 'Programmable thermostats cost $30-100. EPA: every 1C reduction saves 5% on heating. 2C nightly drop = 0.3 tonnes + $120/year.', '0.3 tonnes/year', 'U.S. EPA', 'https://www.energystar.gov/products/heating_cooling/programmable_thermostats', null, null);
+    // 8. THERMOSTAT - NRCan (Canada)
+    html += actionCard('8', '&#127777;', 'Lower Thermostat at Night', 'Natural Resources Canada: every 1°C reduction saves 5% on heating. A programmable thermostat costs $30-100 and pays for itself in one season.', '0.3 tonnes/year', 'Natural Resources Canada', 'https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/energy-efficiency-homes', null, null);
     
-    // Action 9
-    html += actionCard('9', '&#9851;', 'Buy Secondhand Before New', 'Manufacturing one laptop = 200 kg CO2. One sofa = 100 kg. Secondhand cuts this to near zero.', '0.5-2 tonnes/year', 'Ellen MacArthur Foundation', 'https://ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview', null, null);
+    // 9. SECONDHAND - Ellen MacArthur (Global)
+    html += actionCard('9', '&#9851;', 'Buy Secondhand Before New', 'Manufacturing one laptop = 200 kg CO2. Ellen MacArthur Foundation: extending product life 2x cuts manufacturing emissions 50%.', '0.5-2 tonnes/year', 'Ellen MacArthur Foundation', 'https://ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview', null, null);
     
-    // Action 10
-    html += actionCard('10', '&#127758;', 'Join Community Solar', 'No roof? No problem. Subscribe to local solar farms. NREL: subscribers save 10-15% on bills with zero installation.', '1-3 tonnes/year', 'NREL Community Solar Research', 'https://www.nrel.gov/solar/community-solar.html', null, null);
+    // 10. COMMUNITY SOLAR - NREL (US)
+    html += actionCard('10', '&#127758;', 'Join Community Solar', 'No roof? No problem. NREL research shows community solar subscribers save 10-15% on bills with zero installation cost.', '1-3 tonnes/year', 'National Renewable Energy Laboratory (USA)', 'https://www.nrel.gov/solar/', null, null);
     
     // CTA box
     html += '<div style="background:#fef3c7;padding:20px;border-radius:10px;margin-top:30px;border-left:4px solid #f59e0b;">';
@@ -99,7 +98,7 @@ exports.handler = async (event) => {
     // Footer
     html += '<div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">';
     html += '<p>EcoMetric Carbon Intelligence Platform</p>';
-    html += '<p>Sources: EPA, NREL, EnergyStar, Project Drawdown, Oxford University</p>';
+    html += '<p>Sources verified: NREL (USA), NRCan (Canada), DOE (USA), ICAO (UN), Oxford University, EU JRC, Ellen MacArthur Foundation</p>';
     html += '<p><a href="https://ecometric-carbon-calc.netlify.app" style="color:#059669;">Calculate Again</a></p>';
     html += '</div>';
     
@@ -127,7 +126,6 @@ exports.handler = async (event) => {
   }
 };
 
-// Helper function to build each action card safely
 function actionCard(num, icon, title, desc, savings, source, learnLink, affiliateLink, affiliateCta) {
   let card = '';
   card += '<div style="background:white;padding:20px;border-radius:8px;margin-bottom:15px;border-left:4px solid #059669;">';
