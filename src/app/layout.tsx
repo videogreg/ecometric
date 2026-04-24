@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 export const metadata = {
   metadataBase: new URL('https://ecometric-carbon-calc.netlify.app'),
-  title: 'EcoMetric | Carbon Calculator USA Canada',
+title: 'EcoMetric | Carbon Footprint Calculator for USA & Canada',
   description: 'Free carbon footprint calculator using EPA & NREL data. Get 10 personalized actions. Compare USA & Canada averages.',
   keywords: ['carbon footprint calculator', 'carbon emissions', 'USA carbon calculator', 'Canada carbon calculator', 'solar savings', 'heat pump rebates', 'reduce carbon footprint', 'home energy efficiency', 'EV emissions', 'climate action'],
   authors: [{ name: 'EcoMetric', url: 'https://ecometric-carbon-calc.netlify.app' }],
