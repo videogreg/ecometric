@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 type Lead = {
   email: string;
@@ -13,16 +14,22 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/leaderboard')
-      .then(res => res.json())
-      .then(data => {
-        setUsers(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setUsers([]);
-        setLoading(false);
-      });
+    async function fetchLeaderboard() {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('email, carbon_score, created_at')
+        .order('carbon_score', { ascending: true })
+        .limit(10);
+
+      if (error) {
+        console.error('Error:', error);
+      } else {
+        setUsers(data || []);
+      }
+      setLoading(false);
+    }
+
+    fetchLeaderboard();
   }, []);
 
   if (loading) {

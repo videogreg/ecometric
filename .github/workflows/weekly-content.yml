@@ -18,11 +18,7 @@ jobs:
           
       - name: Generate article
         run: node scripts/generate-article.js
-          
-      - name: Update leaderboard data
-        run: |
-          curl -s https://ecometric-carbon-calc.netlify.app/api/leaderboard > content/leads.json || echo "[]" > content/leads.json
-          
+                    
       - name: Commit and push
         run: |
           git config user.name "EcoMetric Bot"
