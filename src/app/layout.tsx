@@ -3,11 +3,8 @@ import type { ReactNode } from 'react'
 
 export const metadata = {
   metadataBase: new URL('https://ecometric-carbon-calc.netlify.app'),
-  title: {
-    default: 'EcoMetric | Free Carbon Footprint Calculator for USA & Canada',
-    template: '%s | EcoMetric',
-  },
-  description: 'Calculate your carbon footprint with EPA and NREL data. Get 10 personalized reduction actions. Compare to USA and Canada averages. Discover solar, heat pump, and EV savings.',
+  title: 'EcoMetric | Carbon Calculator USA Canada',
+  description: 'Free carbon footprint calculator using EPA & NREL data. Get 10 personalized actions. Compare USA & Canada averages.',
   keywords: ['carbon footprint calculator', 'carbon emissions', 'USA carbon calculator', 'Canada carbon calculator', 'solar savings', 'heat pump rebates', 'reduce carbon footprint', 'home energy efficiency', 'EV emissions', 'climate action'],
   authors: [{ name: 'EcoMetric', url: 'https://ecometric-carbon-calc.netlify.app' }],
   creator: 'EcoMetric',
@@ -24,8 +21,8 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: 'EcoMetric | Free Carbon Footprint Calculator for USA & Canada',
-    description: 'Calculate your carbon footprint with EPA and NREL data. Get 10 personalized reduction actions. Compare to USA and Canada averages. Discover solar, heat pump, and EV savings.',
+    title: 'EcoMetric | Carbon Calculator USA Canada',
+    description: 'Free carbon footprint calculator using EPA & NREL data. Get 10 personalized actions. Compare USA & Canada averages.',
     url: 'https://ecometric-carbon-calc.netlify.app',
     siteName: 'EcoMetric',
     images: [
@@ -41,8 +38,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EcoMetric | Free Carbon Footprint Calculator',
-    description: 'Calculate your carbon footprint with EPA and NREL data. Get 10 personalized reduction actions. Compare to USA and Canada averages.',
+    title: 'EcoMetric | Carbon Calculator',
+    description: 'Free carbon footprint calculator using EPA & NREL data. Get 10 personalized actions.',
     images: ['/og-image.jpg'],
     creator: '@ecometric',
   },
