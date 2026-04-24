@@ -91,7 +91,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'EcoMetric <ecomcip@gmail.com>',
+        from: 'EcoMetric <onboarding@resend.dev>',
         to: email,
         subject: `Your Carbon Footprint Report: ${carbonScore.toFixed(1)} tonnes/year`,
         html: htmlContent
