@@ -28,8 +28,8 @@ export const metadata = {
     images: ['/og-image.jpg'],
     creator: '@ecometric',
   },
-  verification: {
-    google: 'google-site-verification: googlef1bb1aaf8519f49e.html',
+    verification: {
+    google: 'HobED50zFcTE_x5MWcxtDmOtdwyy6DLiusk_mL1j5T4',
   },
 }
 
