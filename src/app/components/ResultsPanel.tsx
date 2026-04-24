@@ -2,18 +2,26 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import ComparisonChart from './ComparisonChart';
+import BreakdownChart from './BreakdownChart';
 
 type ResultsPanelProps = {
   carbonScore: number;
+  breakdown?: Record<string, number>;
   onRestart: () => void;
   userData?: {
     homeSize?: number;
     electricity?: number;
     miles?: number;
+    heatingType?: string;
+    occupants?: number;
+    vehicleType?: string;
+    flights?: number;
+    diet?: string;
+    shopping?: string;
   };
 };
 
-export default function ResultsPanel({ carbonScore, onRestart, userData }: ResultsPanelProps) {
+export default function ResultsPanel({ carbonScore, breakdown, onRestart, userData }: ResultsPanelProps) {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
@@ -26,7 +34,6 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
     setSaving(true);
     setErrorMsg('');
     
-    // Save to Supabase
     const { data, error } = await supabase
       .from('leads')
       .insert({
@@ -47,7 +54,6 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
     if (data && data[0]) {
       setLeadId(data[0].id);
       
-      // Send email via Netlify Function
       try {
         const emailResponse = await fetch('/.netlify/functions/send-email', {
           method: 'POST',
@@ -107,6 +113,8 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
       </div>
       
       <ComparisonChart userScore={carbonScore} />
+      
+      {breakdown && <BreakdownChart breakdown={breakdown} />}
       
       <div className="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
         <p className="text-amber-800 text-sm">
