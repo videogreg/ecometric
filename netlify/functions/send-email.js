@@ -1,7 +1,6 @@
-import { Handler } from '@netlify/functions';
-import nodemailer from 'nodemailer';
+const nodemailer = require('nodemailer');
 
-export const handler: Handler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method not allowed' };
   }
@@ -12,7 +11,6 @@ export const handler: Handler = async (event) => {
     return { statusCode: 400, body: 'Missing required fields' };
   }
 
-  // Create Gmail transporter
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -21,7 +19,6 @@ export const handler: Handler = async (event) => {
     }
   });
 
-  // Personalized tips based on score
   let tips = '';
   if (carbonScore > 10) {
     tips = `
@@ -52,7 +49,6 @@ export const handler: Handler = async (event) => {
     `;
   }
 
-  // Email HTML template
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
       <div style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); padding: 30px; text-align: center; color: white;">
