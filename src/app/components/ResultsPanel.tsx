@@ -26,29 +26,51 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
     setSaving(true);
     setErrorMsg('');
     
-    const insertData = {
-      email: email,
-      carbon_score: carbonScore,
-      home_size: userData?.homeSize || null,
-      electricity_usage: userData?.electricity || null,
-      miles_per_week: userData?.miles || null
-    };
-    
+    // Save to Supabase
     const { data, error } = await supabase
       .from('leads')
-      .insert(insertData)
+      .insert({
+        email: email,
+        carbon_score: carbonScore,
+        home_size: userData?.homeSize || null,
+        electricity_usage: userData?.electricity || null,
+        miles_per_week: userData?.miles || null
+      })
       .select();
     
-    setSaving(false);
-    
     if (error) {
+      setSaving(false);
       setErrorMsg(error.message);
-    } else if (data && data[0]) {
-      setLeadId(data[0].id);
-      setSubmitted(true);
-      // Auto-send report simulation (we'll add SendGrid next)
-      console.log('Would send email to:', email);
+      return;
     }
+    
+    if (data && data[0]) {
+      setLeadId(data[0].id);
+      
+      // Send email via Netlify Function
+      try {
+        const emailResponse = await fetch('/.netlify/functions/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            carbonScore: carbonScore,
+            homeSize: userData?.homeSize,
+            electricity: userData?.electricity,
+            miles: userData?.miles
+          })
+        });
+        
+        const emailResult = await emailResponse.json();
+        console.log('Email sent:', emailResult);
+      } catch (emailErr) {
+        console.error('Email send error:', emailErr);
+      }
+      
+      setSubmitted(true);
+    }
+    
+    setSaving(false);
   };
 
   const trackClick = async (buttonType: 'solar' | 'products') => {
@@ -122,7 +144,7 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
             {saving ? 'Generating Your Plan...' : 'Send My Free Plan'}
           </button>
         </form>
-           ) : (
+      ) : (
         <div className="mb-6 p-4 bg-green-100 rounded-lg text-center border border-green-300">
           <p className="text-green-800 font-bold text-lg">✅ Plan Generated!</p>
           <p className="text-green-700 text-sm mt-1">
@@ -134,7 +156,6 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
         </div>
       )}
 
-      {/* Social Sharing */}
       <div className="mt-6 text-center">
         <button 
           onClick={() => setShowShare(!showShare)}
@@ -179,7 +200,6 @@ export default function ResultsPanel({ carbonScore, onRestart, userData }: Resul
         )}
       </div>
 
-      {/* Affiliate Revenue Buttons */}
       <div className="mt-6 space-y-3">
         <a 
           href={affiliateLinks.solar}
