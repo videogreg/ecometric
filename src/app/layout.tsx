@@ -2,39 +2,16 @@ import './globals.css'
 import type { ReactNode } from 'react'
 
 export const metadata = {
-  title: 'EcoMetric | Free Carbon Footprint Calculator for USA & Canada',
-  description: 'Calculate your carbon footprint with scientifically accurate data. Get 10 personalized reduction actions based on EPA, NREL, and Natural Resources Canada emission factors. Compare your score to national averages and discover solar, EV, and home efficiency savings.',
-  keywords: 'carbon footprint calculator, carbon emissions, USA carbon calculator, Canada carbon calculator, solar savings, heat pump rebates, reduce carbon footprint, home energy efficiency, EV emissions, climate action',
+  metadataBase: new URL('https://ecometric-carbon-calc.netlify.app'),
+  title: {
+    default: 'EcoMetric | Free Carbon Footprint Calculator for USA & Canada',
+    template: '%s | EcoMetric',
+  },
+  description: 'Calculate your carbon footprint with EPA and NREL data. Get 10 personalized reduction actions. Compare to USA and Canada averages. Discover solar, heat pump, and EV savings.',
+  keywords: ['carbon footprint calculator', 'carbon emissions', 'USA carbon calculator', 'Canada carbon calculator', 'solar savings', 'heat pump rebates', 'reduce carbon footprint', 'home energy efficiency', 'EV emissions', 'climate action'],
   authors: [{ name: 'EcoMetric', url: 'https://ecometric-carbon-calc.netlify.app' }],
   creator: 'EcoMetric',
   publisher: 'EcoMetric',
-  metadataBase: new URL('https://ecometric-carbon-calc.netlify.app'),
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'EcoMetric | Free Carbon Footprint Calculator',
-    description: 'Calculate your carbon footprint in 5 steps. Get personalized reduction actions. Compare to USA/Canada averages.',
-    url: 'https://ecometric-carbon-calc.netlify.app',
-    siteName: 'EcoMetric',
-    images: [
-      {
-        url: 'https://ecometric-carbon-calc.netlify.app/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'EcoMetric Carbon Footprint Calculator',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'EcoMetric | Free Carbon Footprint Calculator',
-    description: 'Calculate your carbon footprint in 5 steps. Get 10 personalized reduction actions.',
-    images: ['https://ecometric-carbon-calc.netlify.app/og-image.jpg'],
-    creator: '@ecometric',
-  },
   robots: {
     index: true,
     follow: true,
@@ -46,8 +23,34 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
+  openGraph: {
+    title: 'EcoMetric | Free Carbon Footprint Calculator for USA & Canada',
+    description: 'Calculate your carbon footprint with EPA and NREL data. Get 10 personalized reduction actions. Compare to USA and Canada averages. Discover solar, heat pump, and EV savings.',
+    url: 'https://ecometric-carbon-calc.netlify.app',
+    siteName: 'EcoMetric',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'EcoMetric Carbon Footprint Calculator',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'EcoMetric | Free Carbon Footprint Calculator',
+    description: 'Calculate your carbon footprint with EPA and NREL data. Get 10 personalized reduction actions. Compare to USA and Canada averages.',
+    images: ['/og-image.jpg'],
+    creator: '@ecometric',
+  },
   verification: {
-    google: 'your-google-verification-code', // Add when you get from Search Console
+    google: 'your-google-verification-code',
+  },
+  alternates: {
+    canonical: '/',
   },
 }
 
@@ -55,7 +58,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* JSON-LD Structured Data: WebApplication */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -85,8 +87,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             }),
           }}
         />
-        
-        {/* JSON-LD Structured Data: FAQPage */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
