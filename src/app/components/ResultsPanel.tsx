@@ -63,7 +63,13 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
             carbonScore: carbonScore,
             homeSize: userData?.homeSize,
             electricity: userData?.electricity,
-            miles: userData?.miles
+            miles: userData?.miles,
+            vehicleType: userData?.vehicleType,
+            flights: userData?.flights,
+            diet: userData?.diet,
+            shopping: userData?.shopping,
+            heatingType: userData?.heatingType,
+            occupants: userData?.occupants
           })
         });
         
@@ -79,22 +85,17 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
     setSaving(false);
   };
 
-  const trackClick = async (buttonType: 'solar' | 'products') => {
+  const trackClick = async (buttonType: 'solar' | 'epa') => {
     if (leadId) {
       await supabase.from('clicks').insert({
         lead_id: leadId,
         button_type: buttonType,
-        revenue_potential: buttonType === 'solar' ? 75 : 25
+        revenue_potential: buttonType === 'solar' ? 75 : 0
       });
     }
   };
 
   const shareText = `I just calculated my carbon footprint: ${carbonScore.toFixed(1)} tonnes/year. The average North American produces 16 tonnes! Calculate yours at ecometric-carbon-calc.netlify.app #carbonfootprint #sustainability`;
-
-  const affiliateLinks = {
-    solar: 'https://www.energysage.com/solar/carbon-offset/',
-    products: 'https://earthhero.com/',
-  };
 
   return (
     <div className="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl max-w-lg mx-auto text-left border border-emerald-100">
@@ -131,10 +132,10 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
       {!submitted ? (
         <form onSubmit={handleEmailSubmit} className="mt-6 p-5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200">
           <p className="text-emerald-800 font-bold mb-2">
-            📧 Get Your Personalized Reduction Plan
+            📧 Get Your 10-Point Reduction Plan
           </p>
           <p className="text-emerald-600 text-sm mb-3">
-            We'll email you 3 custom actions based on your {carbonScore.toFixed(1)} tonne score
+            We'll email you 10 science-backed actions based on your {carbonScore.toFixed(1)} tonne score
           </p>
           <input
             type="email"
@@ -208,27 +209,28 @@ export default function ResultsPanel({ carbonScore, breakdown, onRestart, userDa
         )}
       </div>
 
+      {/* HONEST AFFILIATE SECTION */}
       <div className="mt-6 space-y-3">
         <a 
-          href={affiliateLinks.solar}
+          href="https://www.energysage.com/solar/carbon-offset/"
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick('solar')}
           className="block w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-xl hover:from-amber-600 hover:to-orange-600 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
         >
           <div className="text-lg">☀️ Get Free Solar Estimate</div>
-          <div className="text-sm font-normal opacity-90">Save $1,200/year • No obligation • 2-min quote</div>
+          <div className="text-sm font-normal opacity-90">Affiliate link • Save $1,200/year • No obligation</div>
         </a>
 
         <a 
-          href={affiliateLinks.products}
+          href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackClick('products')}
-          className="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-xl hover:from-emerald-700 hover:to-teal-700 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
+          onClick={() => trackClick('epa')}
+          className="block w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-xl hover:from-blue-700 hover:to-blue-900 text-center font-bold shadow-lg transform hover:scale-[1.02] transition"
         >
-          <div className="text-lg">🛒 Shop Carbon-Neutral Products</div>
-          <div className="text-sm font-normal opacity-90">Verified sustainable brands • Free shipping over $50</div>
+          <div className="text-lg">🧮 EPA Carbon Calculator</div>
+          <div className="text-sm font-normal opacity-90">Free government tool • Verify your footprint</div>
         </a>
       </div>
 
