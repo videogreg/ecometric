@@ -2,8 +2,20 @@ import CarbonCalculator from './components/CarbonCalculator';
 import Link from 'next/link';
 
 export const metadata = {
+  title: 'EcoMetric | Free Carbon Footprint Calculator for USA & Canada',
+  description: 'Calculate your carbon footprint in 60 seconds. Get a personalized 10-point reduction plan with verified savings data from NREL, EPA, and Natural Resources Canada.',
+  keywords: 'carbon footprint calculator, carbon calculator USA, carbon calculator Canada, reduce carbon emissions, sustainability calculator, eco-friendly living',
   other: {
     'fo-verify': 'cecce78e-b288-423a-9ea8-e41024eed78d',
+  },
+  openGraph: {
+    title: 'EcoMetric Carbon Intelligence Platform',
+    description: 'Calculate your carbon footprint and discover high-impact savings actions.',
+    url: 'https://ecometric-carbon-calc.netlify.app',
+    siteName: 'EcoMetric',
+    images: [{ url: 'https://ecometric-carbon-calc.netlify.app/logo-512.png' }],
+    locale: 'en_US',
+    type: 'website',
   },
 };
 

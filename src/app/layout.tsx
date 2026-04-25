@@ -58,6 +58,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/* HARDCODED VERIFICATION META - ensures bots can read it */}
+        <meta name="fo-verify" content="cecce78e-b288-423a-9ea8-e41024eed78d" />
+        
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         
