@@ -39,12 +39,12 @@ export default function BlogPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-8">
       <div className="max-w-3xl mx-auto">
-        {/* Logo Header */}
+        {/* Logo Header - BIGGER */}
         <div className="text-center mb-8">
           <img 
             src="/logo-512.png" 
             alt="EcoMetric" 
-            className="w-20 h-20 mx-auto mb-4 drop-shadow-lg"
+            className="w-32 h-32 mx-auto mb-4 drop-shadow-lg"
           />
           <h1 className="text-4xl font-bold text-white mb-2">EcoMetric Blog</h1>
           <p className="text-emerald-300">Sustainable living tips and carbon reduction guides</p>
