@@ -44,7 +44,7 @@ export default function BlogPage() {
           <img 
             src="/logo-512.png" 
             alt="EcoMetric" 
-            className="w-32 h-32 mx-auto mb-4 drop-shadow-lg"
+            className="w-48 h-48 mx-auto mb-4 drop-shadow-2xl"
           />
           <h1 className="text-4xl font-bold text-white mb-2">EcoMetric Blog</h1>
           <p className="text-emerald-300">Sustainable living tips and carbon reduction guides</p>

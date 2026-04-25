@@ -26,10 +26,10 @@ exports.handler = async (event) => {
 
     let html = '';
     
-    // Header with logo
+    // Header with logo - BIGGER
     html += '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">';
     html += '<div style="background:linear-gradient(135deg,#065f46 0%,#047857 100%);padding:30px;text-align:center;color:white;">';
-        html += '<img src="https://ecometric-carbon-calc.netlify.app/logo-512.png" alt="EcoMetric" style="width:120px;height:120px;margin-bottom:15px;">';
+    html += '<img src="https://ecometric-carbon-calc.netlify.app/logo-512.png" alt="EcoMetric" style="width:180px;height:180px;margin-bottom:15px;">';
     html += '<h1 style="margin:0;font-size:28px;">EcoMetric</h1>';
     html += '<p style="margin:10px 0 0 0;opacity:0.9;">Your 10-Point Carbon Reduction Plan</p>';
     html += '</div>';
@@ -96,9 +96,10 @@ exports.handler = async (event) => {
     html += '<a href="https://www.energysage.com/solar/carbon-offset/" style="display:inline-block;background:#f59e0b;color:white;padding:12px 25px;text-decoration:none;border-radius:5px;font-weight:bold;">Get Free Solar Quote</a>';
     html += '</div>';
     
-    // Footer
+    // Footer with logo - BIGGER
     html += '<div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">';
-        html += '<img src="https://ecometric-carbon-calc.netlify.app/logo-512.png" alt="EcoMetric" style="width:60px;height:60px;margin-bottom:10px;">';    html += '<p>EcoMetric Carbon Intelligence Platform</p>';
+    html += '<img src="https://ecometric-carbon-calc.netlify.app/logo-512.png" alt="EcoMetric" style="width:100px;height:100px;margin-bottom:10px;">';
+    html += '<p>EcoMetric Carbon Intelligence Platform</p>';
     html += '<p>Sources verified: NREL (USA), NRCan (Canada), DOE (USA), ICAO (UN), Oxford University, EU JRC, Ellen MacArthur Foundation</p>';
     html += '<p><a href="https://ecometric-carbon-calc.netlify.app" style="color:#059669;">Calculate Again</a></p>';
     html += '</div>';
