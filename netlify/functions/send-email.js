@@ -26,9 +26,10 @@ exports.handler = async (event) => {
 
     let html = '';
     
-    // Header
+    // Header with logo
     html += '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">';
     html += '<div style="background:linear-gradient(135deg,#065f46 0%,#047857 100%);padding:30px;text-align:center;color:white;">';
+    html += '<img src="https://ecometric-carbon-calc.netlify.app/logo-512.png" alt="EcoMetric" style="width:80px;height:80px;margin-bottom:10px;">';
     html += '<h1 style="margin:0;font-size:28px;">EcoMetric</h1>';
     html += '<p style="margin:10px 0 0 0;opacity:0.9;">Your 10-Point Carbon Reduction Plan</p>';
     html += '</div>';
@@ -71,7 +72,7 @@ exports.handler = async (event) => {
     html += actionCard('4', '&#128663;', 'Switch to an Electric Vehicle', 'U.S. Department of Energy data: EVs produce 60-68% fewer life-cycle emissions than gas cars. In clean-grid regions, the advantage exceeds 80%.', '2-4 tonnes/year', 'U.S. Department of Energy', 'https://afdc.energy.gov/vehicles/electric_emissions.php', null, null);
     
     // 5. DIET - Oxford / Our World in Data (UK/Global)
-    html += actionCard('5', '&#129385;', 'Reduce Beef Consumption', 'Beef produces 60 kg CO2 per kg — 10x chicken, 50x beans. University of Oxford study: halving meat cuts food emissions 35%.', '0.8-1.5 tonnes/year', 'University of Oxford / Our World in Data', 'https://ourworldindata.org/environmental-impacts-of-food', null, null);
+    html += actionCard('5', '&#129385;', 'Reduce Beef Consumption', 'Beef produces 60 kg CO2 per kg — 10x chicken, 50x beans. Oxford study: halving meat cuts food emissions 35%.', '0.8-1.5 tonnes/year', 'University of Oxford', 'https://ourworldindata.org/environmental-impacts-of-food', null, null);
     
     // 6. FLIGHTS - ICAO (UN)
     html += actionCard('6', '&#9992;', 'Cut One Flight This Year', 'One cross-country round trip emits ~0.8 tonnes CO2. ICAO Carbon Emissions Calculator is the UN-approved standard for aviation offset programs.', '0.8 tonnes/flight', 'International Civil Aviation Organization (UN)', 'https://www.icao.int/environmental-protection/environmental-tools/icec', null, null);
@@ -82,10 +83,10 @@ exports.handler = async (event) => {
     // 8. THERMOSTAT - NRCan (Canada)
     html += actionCard('8', '&#127777;', 'Lower Thermostat at Night', 'Natural Resources Canada: every 1°C reduction saves 5% on heating. A programmable thermostat costs $30-100 and pays for itself in one season.', '0.3 tonnes/year', 'Natural Resources Canada', 'https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/energy-efficiency-homes', null, null);
     
-    // 9. SECONDHAND - Ellen MacArthur (Global)
+    // 9. PATAGONIA WORN WEAR (when approved)
     html += actionCard('9', '&#9851;', 'Buy Secondhand Before New', 'Manufacturing one laptop = 200 kg CO2. Ellen MacArthur Foundation: extending product life 2x cuts manufacturing emissions 50%.', '0.5-2 tonnes/year', 'Ellen MacArthur Foundation', 'https://ellenmacarthurfoundation.org/topics/circular-economy-introduction/overview', null, null);
     
-    // 10. COMMUNITY SOLAR - DOE (US) — DIFFERENT LINK, NO DUPLICATE
+    // 10. COMMUNITY SOLAR - DOE (US)
     html += actionCard('10', '&#127758;', 'Join Community Solar', 'No roof? No problem. U.S. Department of Energy community solar programs let you subscribe to local solar farms with zero installation cost.', '1-3 tonnes/year', 'U.S. Department of Energy', 'https://www.energy.gov/eere/solar/community-solar-basics', null, null);
     
     // CTA box
@@ -97,6 +98,7 @@ exports.handler = async (event) => {
     
     // Footer
     html += '<div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px;">';
+    html += '<img src="https://ecometric-carbon-calc.netlify.app/logo-512.png" alt="EcoMetric" style="width:40px;height:40px;margin-bottom:10px;">';
     html += '<p>EcoMetric Carbon Intelligence Platform</p>';
     html += '<p>Sources verified: NREL (USA), NRCan (Canada), DOE (USA), ICAO (UN), Oxford University, EU JRC, Ellen MacArthur Foundation</p>';
     html += '<p><a href="https://ecometric-carbon-calc.netlify.app" style="color:#059669;">Calculate Again</a></p>';
