@@ -1,6 +1,12 @@
 import CarbonCalculator from './components/CarbonCalculator';
 import Link from 'next/link';
 
+export const metadata = {
+  other: {
+    'fo-verify': 'cecce78e-b288-423a-9ea8-e41024eed78d',
+  },
+};
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 relative overflow-hidden">
